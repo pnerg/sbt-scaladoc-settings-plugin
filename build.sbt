@@ -27,7 +27,7 @@ javacOptions ++= Seq("-source", "1.7", "-target", "1.8", "-Xlint")
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-language:implicitConversions", "-language:higherKinds", "-target:jvm-1.7")
 
 scalacOptions in (Compile, doc) ++= Seq("-doc-title", "SBT Scaladoc Settings Plugin")
-scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/src/main/scaladoc/overview.txt")
+scalacOptions in (Compile, doc) ++= org.dmonix.sbt.ScalaDocSettings.rootDoc
 scalacOptions in (Compile, doc) ++= Seq("-doc-footer", "Copyright (c) 2017 Peter Nerg, Apache License v2.0.")
 
 //---------------------------------------
