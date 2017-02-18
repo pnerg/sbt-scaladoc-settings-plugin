@@ -29,7 +29,7 @@ Thus allowing the documentation author to include static content such as images 
 Scaladoc seems to completely lack this functionality.  
 A simple remedy is to include the _copyDocAssetsTask_ into the build.sbt.  
 The example below attaches the task to the _doc_ execution.  
-It will recursively copy all the doc-files to the API output target.
+It will recursively copy all the _doc-file_ directories it finds under the _scaladoc_ directory of your source directory to the API output target.
 
 ```scala
 copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
