@@ -35,6 +35,9 @@ It will recursively copy all the _doc-file_ directories it finds under the _scal
 copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
 ```
 
+###Live Example
+Check out the [build.sbt](../master/build.sbt) for this project to see the usage of the plugin.
+
 ###Installing the plugin
 Simply add this to the _plugins.sbt_ file (of course replacing the version):
 ```scala
