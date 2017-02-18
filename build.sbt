@@ -13,7 +13,7 @@ scalaVersion := "2.10.6"
 //Uses the plugin from : https://github.com/pnerg/sbt-scaladoc-settings-plugin
 //----------------------------
 import org.dmonix.sbt._
-publishTo <<= version {MavenCentralSettings.deployURL(_)}
+publishTo <<= version {MavenCentralSettings.publishURL(_)}
 credentials ++= CredentialsSettings.publishCredentials
 
 //---------------------------------------

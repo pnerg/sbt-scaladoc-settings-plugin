@@ -1,5 +1,7 @@
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+//resolvers +=
+//  "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.1.0")
 
@@ -11,7 +13,7 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.3")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.0")
 
-addSbtPlugin("org.dmonix.sbt" % "sbt-publish-settings-plugin" % "0.5-SNAPSHOT")
+addSbtPlugin("org.dmonix.sbt" % "sbt-publish-settings-plugin" % "0.5")
 
 // This project is its own plugin :)
 unmanagedSourceDirectories in Compile += baseDirectory.value.getParentFile / "src" / "main" / "scala"
