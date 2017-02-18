@@ -20,9 +20,6 @@ credentials ++= CredentialsSettings.publishCredentials
 // Compiler directives
 //---------------------------------------
 
-// allow circular dependencies for test sources
-compileOrder in Test := CompileOrder.Mixed
-
 javacOptions ++= Seq("-source", "1.7", "-target", "1.8", "-Xlint")
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-language:implicitConversions", "-language:higherKinds", "-target:jvm-1.7")
 
@@ -30,24 +27,13 @@ scalacOptions in (Compile, doc) ++= Seq("-doc-title", "SBT Scaladoc Settings Plu
 scalacOptions in (Compile, doc) ++= org.dmonix.sbt.ScalaDocSettings.rootDoc
 scalacOptions in (Compile, doc) ++= Seq("-doc-footer", "Copyright (c) 2017 Peter Nerg, Apache License v2.0.")
 
-//ugly hack to copy the scaladoc doc-files
-lazy val copyDocAssetsTask2 = taskKey[Unit]("Copy doc assets")
-copyDocAssetsTask2 := {
-  println("=======task2======")
-  println("task2-base: "+baseDirectory.value)
-  println("task2-target1: "+target.value)
-  println("task2-target2: "+(target in (Compile, doc)).value)
-  //println(file("src/main/scaladoc/root-doc.txt").getAbsolutePath)
-  //val sourceDir = file("src/main/scaladoc/doc-files")
-  //  val targetDir = (target in (Compile, doc)).value
-  //val targetDir = file("target/api/doc-files")
-  //println(s"Copying doc assets[$sourceDir]->[$targetDir]")
-  //IO.copyDirectory(sourceDir, targetDir)
-  println("=======task2======")
-}
-
+//---------------------------------------
+// Scaladoc generation
+// Uses the built in plugin by this project
+// Executes during doc generations.
+// Recursively copies all the doc-files to the output target
+//---------------------------------------
 copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
-copyDocAssetsTask2 <<= copyDocAssetsTask2 triggeredBy (doc in Compile)
 
 //---------------------------------------
 

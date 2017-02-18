@@ -16,12 +16,10 @@
 package org.dmonix.sbt
 import java.io.File
 
-import sbt.Keys.{commands, name, version}
-import sbt.Opts._
 import sbt._
 import sbt.plugins._
 
-import scala.annotation.target
+import scala.annotation.tailrec
 
 
 /**
@@ -43,32 +41,15 @@ object ScalaDocSettings extends AutoPlugin {
   // This adds the ''packageModule'' command to the set of available commands in SBT
   override lazy val projectSettings = scaladocPluginTasks
 
-  //  //ugly hack to copy the scaladoc doc-files
-//  lazy val copyDocAssetsTask = taskKey[Unit]("Copy doc assets")
-//  copyDocAssetsTask := {
-//    println(baseDirectory.value)
-//    println(file("src/main/scaladoc/root-doc.txt").getAbsolutePath)
-//    val sourceDir = file("src/main/scaladoc/doc-files")
-//    //  val targetDir = (target in (Compile, doc)).value
-//    val targetDir = file("target/api/doc-files")
-//    println(s"Copying doc assets[$sourceDir]->[$targetDir]")
-//    IO.copyDirectory(sourceDir, targetDir)
-//  }
-//  copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
-
   lazy val scaladocPluginTasks: Seq[Def.Setting[_]] = Seq(
-    copyDocAssetsTask <<= (Keys.target in Docs, Keys.baseDirectory in Docs) map { (t: java.io.File, b: java.io.File) => {
-      println("=======task1======")
-      println("task1-base:"+b)
-      println("task1-target:"+t)
-//      println(file("task1-:src/main/scaladoc/root-doc.txt").getAbsolutePath)
-//      val sourceDir = file("src/main/scaladoc/doc-files")
-//      //  val targetDir = (target in (Compile, doc)).value
-//      val targetDir = file("target/api/doc-files")
-//      println(s"Copying doc assets[$sourceDir]->[$targetDir]")
-//      IO.copyDirectory(sourceDir, targetDir)
-      println("=======task1======")
-    }
+      copyDocAssetsTask <<= (Keys.target in (Compile, Keys.doc), Keys.sourceDirectory in Compile) map { (apiTargetDir: File, sourceDir: File) => {
+        val scalaDocDir = new File(sourceDir, "/scaladoc/") //the root dir for the Scaladoc, normally src/main/scaladoc
+        def mapToTargetBound = mapToTarget (scalaDocDir)(apiTargetDir) _
+        listDocFileDirs(scalaDocDir).foreach(docFileDir => {
+          println(s"Copying doc assets[$docFileDir]->[${mapToTargetBound(docFileDir)}]")
+          IO.copyDirectory(docFileDir, mapToTargetBound(docFileDir))
+        })
+      }
     })
 
   /** Creates the settings needed to add a doc root to the scaladoc build.
@@ -100,5 +81,38 @@ object ScalaDocSettings extends AutoPlugin {
     * @since 0.5
     */
   def rootDoc(rootDocFile:String):Seq[String] = Seq("-doc-root-content", rootDocFile)
+
+  /**
+    * Performs a recursive iteration over the provided path listing all ''doc-files'' directories
+    * @param root The root file to start from
+    * @return A list of all found ''doc-files'' directories
+    */
+  def listDocFileDirs(root: File): List[File] = {
+    @tailrec
+    def recListDirs(files: List[File], accumulator: List[File]): List[File] = files match {
+      //End of recursion
+      case Nil =>
+        accumulator
+      case head :: tail =>
+        if(head.isDirectory) //add the directory and continue the recursion
+          recListDirs(Option(head.listFiles).map(_.toList ::: tail).getOrElse(tail), head::accumulator)
+        else //files are not added with the list we have
+          recListDirs(tail, accumulator)
+    }
+    recListDirs(List(root), Nil).filter(_.getName.equalsIgnoreCase("doc-files")) //add a filter on the found directories
+  }
+
+  /**
+    * Maps the target ''doc-files'' to the path it shall be copied to under the ''target'' dir.
+    *
+    * E.g. ../sbt-scaladoc-settings-plugin/src/main/scaladoc/doc-files -> ../sbt-scaladoc-settings-plugin/target/scala-2.10/sbt-0.13/api/doc-files
+    * @param scalaDocDir The scaladoc root path directory (e.g src/main/scaladoc/)
+    * @param targetDir The API docs output directory (e.g. target/scala-2.10/sbt-0.13/api)
+    * @param sourceDir The source ''dir-files'' directory
+    * @return The target directory under the targetDir
+    */
+  private def mapToTarget(scalaDocDir:File)(targetDir:File)(sourceDir:File):File = {
+    new File(sourceDir.getAbsolutePath.replace(scalaDocDir.getAbsolutePath, targetDir.getAbsolutePath))
+  }
 
 }
