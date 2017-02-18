@@ -20,7 +20,7 @@ credentials ++= CredentialsSettings.publishCredentials
 // Compiler directives
 //---------------------------------------
 
-javacOptions ++= Seq("-source", "1.7", "-target", "1.8", "-Xlint")
+javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint")
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-language:implicitConversions", "-language:higherKinds", "-target:jvm-1.7")
 
 scalacOptions in (Compile, doc) ++= Seq("-doc-title", "SBT Scaladoc Settings Plugin")
