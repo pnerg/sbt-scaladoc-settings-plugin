@@ -1,7 +1,5 @@
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-//resolvers +=
-//  "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.1.0")
 
