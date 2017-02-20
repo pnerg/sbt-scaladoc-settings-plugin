@@ -39,7 +39,7 @@ copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
 Check out the [build.sbt](../master/build.sbt) for this project to see the usage of the plugin.
 
 ###Installing the plugin
-Simply add this to the _plugins.sbt_ file (of course replacing the version):
+Simply add this to the _plugins.sbt_ file:
 ```scala
-addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "use-the-proper-version")
+addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "0.5")
 ```
