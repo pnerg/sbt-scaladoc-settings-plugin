@@ -27,13 +27,9 @@ scalacOptions in (Compile, doc) ++= org.dmonix.sbt.ScalaDocSettings.rootDoc("you
 Javadoc has a standard _doc-files_ directory which is automatically included during the javadoc generation.  
 Thus allowing the documentation author to include static content such as images or even html files.  
 Scaladoc seems to completely lack this functionality.  
-A simple remedy is to include the _copyDocAssetsTask_ into the build.sbt.  
-The example below attaches the task to the _doc_ execution.  
-It will recursively copy all the _doc-file_ directories it finds under the _scaladoc_ directory of your source directory to the API output target.
-
-```scala
-copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
-```
+The simple remedy is to include this plugin into your project.  
+This will automatically activate the _copyDocAssetsTask_ which then attaches itself to the _doc_ command.  
+When you invoke _doc_ the task will recursively copy all the _doc-file_ directories it finds under the _scaladoc_ directory of your source directory to the API output target.
 
 ###Live Example
 Check out the [build.sbt](../master/build.sbt) for this project to see the usage of the plugin.
