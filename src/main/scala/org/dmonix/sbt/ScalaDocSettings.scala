@@ -46,11 +46,12 @@ object ScalaDocSettings extends AutoPlugin {
         val scalaDocDir = new File(sourceDir, "/scaladoc/") //the root dir for the Scaladoc, normally src/main/scaladoc
         def mapToTargetBound = mapToTarget (scalaDocDir)(apiTargetDir) _
         listDocFileDirs(scalaDocDir).foreach(docFileDir => {
-          println(s"Copying doc assets[$docFileDir]->[${mapToTargetBound(docFileDir)}]")
-          IO.copyDirectory(docFileDir, mapToTargetBound(docFileDir))
+          val toDir = mapToTargetBound(docFileDir)
+          println(s"Copying doc assets [$docFileDir]->[$toDir}]")
+          IO.copyDirectory(docFileDir, toDir)
         })
       }
-    })
+    } triggeredBy(Keys.doc in Compile))
 
   /** Creates the settings needed to add a doc root to the scaladoc build.
     *

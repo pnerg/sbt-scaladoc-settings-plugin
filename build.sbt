@@ -28,14 +28,6 @@ scalacOptions in (Compile, doc) ++= org.dmonix.sbt.ScalaDocSettings.rootDoc
 scalacOptions in (Compile, doc) ++= Seq("-doc-footer", "Copyright (c) 2017 Peter Nerg, Apache License v2.0.")
 
 //---------------------------------------
-// Scaladoc generation
-// Uses the built in plugin by this project
-// Executes during doc generations.
-// Recursively copies all the doc-files to the output target
-//---------------------------------------
-copyDocAssetsTask <<= copyDocAssetsTask triggeredBy (doc in Compile)
-
-//---------------------------------------
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
