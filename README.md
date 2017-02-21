@@ -37,5 +37,5 @@ Check out the [build.sbt](../master/build.sbt) for this project to see the usage
 ###Installing the plugin
 Simply add this to the _plugins.sbt_ file:
 ```scala
-addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "0.5")
+addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "0.6")
 ```
