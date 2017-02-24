@@ -32,23 +32,52 @@ object ScalaDocSettings extends AutoPlugin {
   override def trigger = allRequirements
 
   object autoImport {
+    lazy val processPlantUML = SettingKey[Boolean]("If the plugin shall attempt to render images of all PlantUML diagrams it finds in the doc-files directories")
+    lazy val plantUMLExtension = SettingKey[String]("The extension for all the PlantUML files  (default '.puml')")
     lazy val copyDocAssetsTask = taskKey[Unit]("Copies all the doc-files directories to the target/API output directory")
   }
 
   // This is to make all the above autoImport values into scope
   import org.dmonix.sbt.ScalaDocSettings.autoImport._
 
+  override def globalSettings = Seq(
+    processPlantUML := true,
+    plantUMLExtension := ".puml"
+  )
+
   // This adds the ''packageModule'' command to the set of available commands in SBT
   override lazy val projectSettings = scaladocPluginTasks
 
   lazy val scaladocPluginTasks: Seq[Def.Setting[_]] = Seq(
-      copyDocAssetsTask <<= (Keys.target in (Compile, Keys.doc), Keys.sourceDirectory in Compile) map { (apiTargetDir: File, sourceDir: File) => {
+      copyDocAssetsTask <<= (Keys.target in (Compile, Keys.doc), Keys.sourceDirectory in Compile, processPlantUML, plantUMLExtension) map { (apiTargetDir: File, sourceDir: File, processPlantUML:Boolean, plantUMLExtension:String) => {
+        def isPlantUMLFile(file:File):Boolean = {
+          if (processPlantUML) {
+            file.name.endsWith(plantUMLExtension)
+          }
+          else {
+            false
+          }
+        }
+
+        import PlantUMLGenerator._
         val scalaDocDir = new File(sourceDir, "/scaladoc/") //the root dir for the Scaladoc, normally src/main/scaladoc
         def mapToTargetBound = mapToTarget (scalaDocDir)(apiTargetDir) _
         listDocFileDirs(scalaDocDir).foreach(docFileDir => {
-          val toDir = mapToTargetBound(docFileDir)
-          println(s"Copying doc assets [$docFileDir]->[$toDir}]")
-          IO.copyDirectory(docFileDir, toDir)
+          //partition the files in the doc-files directory to be plantUML and non-plantUML files
+          val files = docFileDir.listFiles().partition(isPlantUMLFile)
+
+          //map the input doc-files dir to the target doc-files dir
+          val outDir = mapToTargetBound(docFileDir)
+          outDir.mkdirs()
+
+          //all plantUML files that shall be rendered, may be empty in case no files or processPlantUML=false
+          files._1.foreach(f => renderImage(f, outDir))
+
+          //all files that just should be copied
+          files._2.foreach(f => {
+            println(s"Copying doc asset [$f]")
+            IO.copyFile(f, new File(outDir, f.getName))
+          })
         })
       }
     } triggeredBy(Keys.doc in Compile))
