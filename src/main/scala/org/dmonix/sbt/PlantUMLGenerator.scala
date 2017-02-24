@@ -42,6 +42,7 @@ object PlantUMLGenerator {
     val reader = new InputStreamReader(new FileInputStream(plantUMLFile))
     val builder = new BlockUmlBuilder(Collections.emptyList[String], null, new Defines, reader, targetDir, plantUMLFile.getAbsolutePath)
     val outFile = new File(targetDir, plantUMLFile.asPNGFileName)
+    outFile.getParentFile.mkdirs()
     builder.getBlockUmls.foreach(block => {
       val diagram = block.getDiagram
       PSystemUtils.exportDiagrams(diagram, outFile, fileFormatOption).foreach(img => println(s"Wrote PlantUML image [$img]"))

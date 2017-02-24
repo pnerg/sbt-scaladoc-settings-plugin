@@ -2,13 +2,16 @@
 Plugin for providing means to configure scaladoc settings for SBT.
 
 ==Full Documentation==
-[[https://github.com/pnerg/sbt-scaladoc-settings-plugin Github]]
+[[https://github.com/pnerg/sbt-scaladoc-settings-plugin]]
+
+== Example PlantUML Rendering ==
+<img src="./doc-files/flowchart.png">
 
 ==License==
 Copyright 2017 Peter Nerg <br>
  <br>
 Licensed under the Apache License, Version 2.0 (the "License"); <br>
-you may not use this file except in compliance with the License. <br>
+You may not use this file except in compliance with the License. <br>
 You may obtain a copy of the License at <br>
  <br>
     [[http://www.apache.org/licenses/LICENSE-2.0]] <br>

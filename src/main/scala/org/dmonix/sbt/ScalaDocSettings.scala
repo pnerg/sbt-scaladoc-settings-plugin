@@ -68,19 +68,21 @@ object ScalaDocSettings extends AutoPlugin {
 
           //map the input doc-files dir to the target doc-files dir
           val outDir = mapToTargetBound(docFileDir)
-          outDir.mkdirs()
+          outDir.getParentFile.mkdirs()
 
           //all plantUML files that shall be rendered, may be empty in case no files or processPlantUML=false
           files._1.foreach(f => renderImage(f, outDir))
 
           //all files that just should be copied
           files._2.foreach(f => {
-            println(s"Copying doc asset [$f]")
-            IO.copyFile(f, new File(outDir, f.getName))
+            val targetFile = new File(outDir, f.getName)
+            println(s"Copied doc asset [$targetFile]")
+            targetFile.getParentFile.mkdirs()
+            IO.copyFile(f, targetFile)
           })
         })
       }
-    } triggeredBy(Keys.doc in Compile))
+    } runBefore(Keys.packageDoc in Compile))
 
   /** Creates the settings needed to add a doc root to the scaladoc build.
     *

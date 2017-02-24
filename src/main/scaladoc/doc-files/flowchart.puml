@@ -1,0 +1,19 @@
+@startuml
+title ScalaDocSettings doc-files processing
+
+participant doc
+participant ScalaDocSettings
+participant PlantUMLGenerator
+
+doc -> ScalaDocSettings: copyDocAssetsTask
+activate ScalaDocSettings
+    ScalaDocSettings -> ScalaDocSettings: recursiveList[scaladoc]
+    group repeat for each found PlantUML file
+        ScalaDocSettings -> PlantUMLGenerator : renderImage(target-api-dir)
+    end
+    group repeat for each found PlantUML file
+        ScalaDocSettings -> ScalaDocSettings : copy-to-target-api-dir
+    end
+ScalaDocSettings --> doc
+deactivate ScalaDocSettings
+@enduml
