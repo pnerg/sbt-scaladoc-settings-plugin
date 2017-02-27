@@ -34,8 +34,9 @@ object PlantUMLGenerator {
     * The output file will be put in the provided directory keeping the original name but with the ''.png'' extension.
     * @param plantUMLFile The PlantUML text file
     * @param targetDir The output directory
+    * @return The generated png file
     */
-  def renderImage(plantUMLFile:File, targetDir:File) = {
+  def renderImage(plantUMLFile:File, targetDir:File):File = {
     import scala.collection.JavaConversions._
     import FileUtils._
     val fileFormatOption = new FileFormatOption(FileFormat.PNG)
@@ -47,6 +48,7 @@ object PlantUMLGenerator {
       val diagram = block.getDiagram
       PSystemUtils.exportDiagrams(diagram, outFile, fileFormatOption).foreach(img => println(s"Wrote PlantUML image [$img]"))
     })
+    outFile
   }
 
 }

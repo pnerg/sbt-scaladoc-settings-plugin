@@ -34,7 +34,7 @@ object ScalaDocSettings extends AutoPlugin {
   object autoImport {
     lazy val processPlantUML = SettingKey[Boolean]("If the plugin shall attempt to render images of all PlantUML diagrams it finds in the doc-files directories")
     lazy val plantUMLExtension = SettingKey[String]("The extension for all the PlantUML files  (default '.puml')")
-    lazy val copyDocAssetsTask = taskKey[Unit]("Copies all the doc-files directories to the target/API output directory")
+    lazy val copyDocAssetsTask = taskKey[Seq[(File,String)]]("Copies all the doc-files directories to the target/API output directory")
   }
 
   // This is to make all the above autoImport values into scope
@@ -49,40 +49,62 @@ object ScalaDocSettings extends AutoPlugin {
   override lazy val projectSettings = scaladocPluginTasks
 
   lazy val scaladocPluginTasks: Seq[Def.Setting[_]] = Seq(
-      copyDocAssetsTask <<= (Keys.target in (Compile, Keys.doc), Keys.sourceDirectory in Compile, processPlantUML, plantUMLExtension) map { (apiTargetDir: File, sourceDir: File, processPlantUML:Boolean, plantUMLExtension:String) => {
-        def isPlantUMLFile(file:File):Boolean = {
-          if (processPlantUML) {
-            file.name.endsWith(plantUMLExtension)
-          }
-          else {
-            false
-          }
-        }
+    copyDocAssetsTask <<= (Keys.target in (Compile, Keys.doc), Keys.sourceDirectory in Compile, processPlantUML, plantUMLExtension) map { (apiTargetDir: File, sourceDir: File, processPlantUML:Boolean, plantUMLExtension:String) => {
+      def toTargetPath(file:File) = file.getAbsolutePath.replaceAll(apiTargetDir.getAbsolutePath, "")
 
-        import PlantUMLGenerator._
-        val scalaDocDir = new File(sourceDir, "/scaladoc/") //the root dir for the Scaladoc, normally src/main/scaladoc
-        def mapToTargetBound = mapToTarget (scalaDocDir)(apiTargetDir) _
-        listDocFileDirs(scalaDocDir).foreach(docFileDir => {
-          //partition the files in the doc-files directory to be plantUML and non-plantUML files
-          val files = docFileDir.listFiles().partition(isPlantUMLFile)
+      //contains all files from the doc-files directories, including any generated png files
+      val docFiles = generate(apiTargetDir,sourceDir,processPlantUML,plantUMLExtension)
 
-          //map the input doc-files dir to the target doc-files dir
-          val outDir = mapToTargetBound(docFileDir)
-          outDir.getParentFile.mkdirs()
+      //convert the sequence of files to a (File, String) tuple where the String represents the path in the jar file
+      val seq = docFiles.map(f => (f, toTargetPath(f)))
 
-          //all plantUML files that shall be rendered, may be empty in case no files or processPlantUML=false
-          files._1.foreach(f => renderImage(f, outDir))
+      //append the docFiles to the already generated list of all scaladoc files
+      Path.allSubpaths(apiTargetDir).toSeq ++ seq
+    }
+    } dependsOn(Keys.doc in Compile)) //this task depends on doc in order to get the API rendered
 
-          //all files that just should be copied
-          files._2.foreach(f => {
-            val targetFile = new File(outDir, f.getName)
-            println(s"Copied doc asset [$targetFile]")
-            targetFile.getParentFile.mkdirs()
-            IO.copyFile(f, targetFile)
-          })
-        })
+  private def generate(apiTargetDir: File, sourceDir: File, processPlantUML:Boolean, plantUMLExtension:String): Seq[File] = {
+    def isPlantUMLFile(file:File):Boolean = {
+      if (processPlantUML) {
+        file.name.endsWith(plantUMLExtension)
       }
-    } runBefore(Keys.packageDoc in Compile))
+      else {
+        false
+      }
+    }
+
+    import PlantUMLGenerator._
+    val scalaDocDir = new File(sourceDir, "/scaladoc/") //the root dir for the Scaladoc, normally src/main/scaladoc
+    def mapToTargetBound = mapToTarget (scalaDocDir)(apiTargetDir) _
+
+    var files2Add = Seq[File]()
+
+    listDocFileDirs(scalaDocDir).foreach(docFileDir => {
+      //partition the files in the doc-files directory to be plantUML and non-plantUML files
+      val files = docFileDir.listFiles().partition(isPlantUMLFile)
+
+      //map the input doc-files dir to the target doc-files dir
+      val outDir = mapToTargetBound(docFileDir)
+      outDir.getParentFile.mkdirs()
+
+      //all plantUML files that shall be rendered, may be empty in case no files or processPlantUML=false
+      files._1.foreach(f => {
+        files2Add = files2Add :+ renderImage(f, outDir)
+      })
+
+      //all files that just should be copied
+      files._2.foreach(f => {
+        val targetFile = new File(outDir, f.getName)
+        println(s"Copied doc asset [$targetFile]")
+        targetFile.getParentFile.mkdirs()
+        IO.copyFile(f, targetFile)
+        files2Add = files2Add :+ targetFile
+      })
+    })
+
+
+    files2Add
+  }
 
   /** Creates the settings needed to add a doc root to the scaladoc build.
     *

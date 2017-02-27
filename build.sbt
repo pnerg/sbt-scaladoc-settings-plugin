@@ -26,6 +26,10 @@ scalacOptions in (Compile, doc) ++= Seq("-doc-title", "SBT Scaladoc Settings Plu
 scalacOptions in (Compile, doc) ++= org.dmonix.sbt.ScalaDocSettings.rootDoc
 scalacOptions in (Compile, doc) ++= Seq("-doc-footer", "Copyright (c) 2017 Peter Nerg, Apache License v2.0.")
 
+//this setting overrides the default sequence of files to add in packageDoc
+//it's needed in order for the copyDocAssetsTask task to execute
+mappings in (Compile, packageDoc) <<= copyDocAssetsTask
+
 //---------------------------------------
 
 libraryDependencies ++= Seq(
