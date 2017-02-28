@@ -87,5 +87,5 @@ Also the [overview.txt](../master/src/main/scaladoc/overview.txt) for an example
 ###Installing the plugin
 Simply add this to the _plugins.sbt_ file:
 ```scala
-addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "0.6")
+addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "0.7")
 ```
