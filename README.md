@@ -82,7 +82,7 @@ The output should be a jar file containing the documentation.
 This means the documentation is also rendered properly when e.g. publishing artifacts using the _publish_ and/or _release_ commands.
 ###Live Example
 Check out the [build.sbt](../master/build.sbt) for this project to see the usage of the plugin.  
-Also the [overview.txt](../master/src/scaladoc/overview.txt) for an example on how to refer to static files as well as PlantUML images rendered from the plugin.
+Also the [overview.txt](../master/src/main/scaladoc/overview.txt) for an example on how to refer to static files as well as PlantUML images rendered from the plugin.
 
 ###Installing the plugin
 Simply add this to the _plugins.sbt_ file:
