@@ -40,7 +40,7 @@ scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value
 ```
 
 However to facilitate a common way to manage the overview file one can specify it using _ScalaDocSettings.rootDoc_.  
- This will yield the exact same result as the example above, i.e it will  expect the file _src-dir/scaladoc/overview.txt_
+ This will yield the exact same result as the example above, i.e it will  expect the file _src-dir/main/scaladoc/overview.txt_
 ```scala
 scalacOptions in (Compile, doc) ++= org.dmonix.sbt.ScalaDocSettings.rootDoc
 ```
