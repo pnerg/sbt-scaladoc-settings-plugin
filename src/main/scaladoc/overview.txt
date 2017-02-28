@@ -5,7 +5,11 @@ Plugin for providing means to configure scaladoc settings for SBT.
 [[https://github.com/pnerg/sbt-scaladoc-settings-plugin]]
 
 == Example PlantUML Rendering ==
+The image below has automatically been rendered from <i>src/main/scaladoc/doc-files/flowchart.puml</i> <br/>
 <img src="./doc-files/flowchart.png">
+
+== Example Linking Static Content ==
+<a href="./doc-files/flowchart.html">Link to static file (doc-files/flowchart.html)</a>
 
 ==License==
 Copyright 2017 Peter Nerg <br>

@@ -11,7 +11,7 @@ activate ScalaDocSettings
     group repeat for each found PlantUML file
         ScalaDocSettings -> PlantUMLGenerator : renderImage(target-api-dir)
     end
-    group repeat for each found PlantUML file
+    group repeat for each found file in doc-files
         ScalaDocSettings -> ScalaDocSettings : copy-to-target-api-dir
     end
 ScalaDocSettings --> doc
