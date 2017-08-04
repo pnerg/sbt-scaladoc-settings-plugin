@@ -10,7 +10,7 @@ This plugin will provide the same mechanism as the Javadoc.
 Added to that the plugin can also parse [PlantUML](http://plantuml.com/) files and render images out of these.  
 This can be extremely useful for creating a richer documentation with e.g. class/sequence diagrams.
 
-###How does it work?
+### How does it work?
 First off the plugin does expect some standardized layout of the project.  
 E.g. given below:
 
