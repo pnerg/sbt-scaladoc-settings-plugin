@@ -84,7 +84,7 @@ This means the documentation is also rendered properly when e.g. publishing arti
 Check out the [build.sbt](../master/build.sbt) for this project to see the usage of the plugin.  
 Also the [overview.txt](../master/src/main/scaladoc/overview.txt) for an example on how to refer to static files as well as PlantUML images rendered from the plugin.
 
-###Installing the plugin
+### Installing the plugin
 Simply add this to the _plugins.sbt_ file:
 ```scala
 addSbtPlugin("org.dmonix.sbt" % "sbt-scaladoc-settings-plugin" % "0.7")
